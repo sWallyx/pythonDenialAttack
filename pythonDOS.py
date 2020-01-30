@@ -9,7 +9,7 @@ import secrets
 # Class definition
 class pythonDOS():
 
-    def __init__(self, ip: str, port=80, socketsCount=200):
+    def __init__(self, ip, port=80, socketsCount=200):
         """ Class init function, initialize object, use default values on the initialize to keep it simple on production """
         self._ip = ip
         self._port = port
@@ -53,7 +53,7 @@ class pythonDOS():
                 time.sleep(sleep/len(self._sockets))
 
 
-def getMessage(message: str):
+def getMessage(message):
     """ Create the message requested to target server """
     return (message + "{} HTTP/1.1\r\n".format(str(secrets.randbelow(2000)))).encode("utf-8")
 
